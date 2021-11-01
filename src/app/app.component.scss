@@ -1,0 +1,50 @@
+.col-type {
+  width: 100%;
+}
+.e-input-group {
+  margin-bottom: 15px;
+}
+.control-section {
+  position: relative;
+}
+::ng-deep.e-columnheader th:first-child,
+::ng-deep .e-row td:first-child,
+::ng-deep .e-filterbar th:first-child {
+  background: white !important;
+  left: 0;
+  position: sticky;
+  top: auto;
+  width: 55px;
+  max-width: 55px;
+  min-width: 55px;
+}
+::ng-deep.e-columnheader th:nth-child(2),
+::ng-deep .e-row td:nth-child(2),
+::ng-deep .e-filterbar th:nth-child(2) {
+  background: white !important;
+  left: 30px;
+  position: sticky;
+  top: auto;
+  width: 120px;
+}
+::ng-deep.e-columnheader th:nth-child(3),
+::ng-deep .e-row td:nth-child(3),
+::ng-deep .e-filterbar th:nth-child(3) {
+  background: white !important;
+  left: 110px;
+  position: sticky;
+  top: auto;
+  width: 120px;
+}
+
+::ng-deep .e-row td:nth-child(3) {
+  background: white !important;
+  left: 110px;
+  position: sticky;
+  top: auto;
+  width: 120px;
+  border-right: 1px solid black;
+}
+::ng-deep .e-grid td.e-active {
+  background: #e0e0e0 !important;
+}

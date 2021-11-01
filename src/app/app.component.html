@@ -1,15 +1,288 @@
-<div class="control-section">
-  <ejs-treegrid [dataSource]='data'  childMapping='subtasks' height='350' [treeColumnIndex]='1' id="treegridcomp" allowPaging='true' [pageSettings]='pageSettings' allowExcelExport='true' allowPdfExport='true' allowSorting='true'
-  [contextMenuItems]="contextMenuItems" [editSettings]='editing' [toolbar]="toolbar">
-      <e-columns>
-          <e-column field='taskID' headerText='Task ID' isPrimaryKey='true' width='80' [edit]='editparams' textAlign='Right' editType='numericedit'></e-column>
-          <e-column field='taskName' headerText='Task Name' width='190'></e-column>
-          <e-column field='startDate' headerText='Start Date' width='90' format="yMd" textAlign='Right' editType='datepickeredit'></e-column>
-          <e-column field='endDate' headerText='End Date' width='90' format="yMd" textAlign='Right' editType='datepickeredit'></e-column>
-          <e-column field='duration' headerText='Duration' width='85'  [edit]='editparams' textAlign='Right' editType='numericedit'></e-column>
-          <e-column field='progress' headerText='Progress' width='90' textAlign='Right'  [edit]='editparams' editType='numericedit'></e-column>
-          <e-column field='priority' headerText='Priority' width='80' textAlign='Left'   editType='stringedit'></e-column>
-
-      </e-columns>
+<div class="control-section" style="width: 100%; float: left;">
+  <ejs-treegrid
+    #treegrid
+    (contextMenuClick)="contextMenuClick($event)"
+    [dataSource]="data"
+    childMapping="subtasks"
+    height="350"
+    [treeColumnIndex]="1"
+    [allowPaging]="false"
+    [pageSettings]="pageSettings"
+    allowExcelExport="true"
+    allowPdfExport="true"
+    allowSorting="true"
+    [contextMenuItems]="contextMenuItems"
+    [editSettings]="editing"
+    [showColumnChooser]="true"
+    [toolbar]="toolbar"
+    allowRowDragAndDrop="true"
+    allowReordering="true"
+    allowResizing="true"
+    allowTextWrap="true"
+    [selectionSettings]="selectionSettings"
+    allowFiltering="true"
+    [filterSettings]="filterSettings"
+    [sortSettings]="sortSettings"
+    (actionComplete)="sort($event)"
+    GridCopyOption="CopyData,IncludeHeaders"
+    GridPasteOption="PasteData,ExcludeFirstLine"
+    [enableInfiniteScrolling]=true
+  >
+    <e-columns>
+      <e-column
+        field="taskID"
+        headerText="Task ID"
+        isPrimaryKey="true"
+        width="80"
+        [edit]="editparams"
+        textAlign="Left"
+        editType="numericedit"
+      ></e-column>
+      <e-column field="taskName" headerText="Task Name" width="190"></e-column>
+      <e-column
+        field="startDate"
+        headerText="Start Date"
+        width="200"
+        format="yMd"
+        textAlign="Left"
+        editType="datepickeredit"
+      ></e-column>
+      <e-column
+        field="endDate"
+        headerText="End Date"
+        width="200"
+        format="yMd"
+        textAlign="Left"
+        editType="datepickeredit"
+      ></e-column>
+      <e-column
+        field="duration"
+        headerText="Duration"
+        width="200"
+        [edit]="editparams"
+        textAlign="Left"
+        editType="numericedit"
+      ></e-column>
+      <e-column
+        field="progress"
+        headerText="Progress"
+        width="200"
+        textAlign="Left"
+        [edit]="editparams"
+        editType="numericedit"
+      ></e-column>
+      <e-column field="priority" headerText="Priority" width="200" textAlign="Left" editType="stringedit"></e-column>
+    </e-columns>
   </ejs-treegrid>
 </div>
+
+<ejs-dialog
+  #editColumnDialog
+  [visible]="false"
+  header="Edit Column"
+  [target]="deleteColTargetElement"
+  width="250px"
+  [buttons]="editColButtons"
+>
+  <ng-template #content>
+    <form [formGroup]="editColumnFormGroup">
+      <div class="e-input-group">
+        <input class="e-input" formControlName="name" type="text" placeholder="Name" />
+      </div>
+
+      <ejs-dropdownlist
+        class="col-type"
+        #dropdown
+        formControlName="type"
+        [dataSource]="sportsData"
+        [fields]="fields"
+        placeholder="Select Type"
+        floatLabelType="Never"
+      >
+      </ejs-dropdownlist>
+      <div class="e-input-group">
+        <input class="e-input" type="text" placeholder="Default Value" formControlName="defaultValue" />
+      </div>
+    </form>
+  </ng-template>
+</ejs-dialog>
+
+<ejs-dialog
+  #addRowDialog
+  [visible]="false"
+  header="Add New Row"
+  [target]="targetElement"
+  width="250px"
+  [visible]="false"
+  [buttons]="addNewRowbuttons"
+>
+  <ng-template #content>
+    <form [formGroup]="form" (ngSubmit)="submitRowData()" autocomplete="off">
+      <input class="e-input" type="text" formControlName="taskName" placeholder="task name" /><br /><br />
+      <input class="e-input" type="date" formControlName="startDate" placeholder="start date" /><br /><br />
+      <input class="e-input" type="date" formControlName="endDate" placeholder="end Date" /><br /><br />
+      <input class="e-input" type="text" formControlName="duration" placeholder="Duration" /><br /><br />
+      <input class="e-input" type="text" formControlName="progress" placeholder="Progress" /><br /><br />
+      <input class="e-input" type="text" formControlName="priority" placeholder="Priority" /><br /><br />
+      <!-- <ejs-dropdownlist
+    class="col-type"
+    #dropdown
+    formControlName="type"
+    [dataSource]="['Add Child Row','Add Next Row' ]"
+    placeholder="Select Type"
+    floatLabelType="Never"
+  >
+  </ejs-dropdownlist> -->
+    </form>
+  </ng-template>
+</ejs-dialog>
+
+<ejs-dialog
+  [visible]="false"
+  #addColumnDialog
+  header="Add New Column"
+  [target]="targetElement"
+  width="250px"
+  [buttons]="buttons"
+>
+  <ng-template #content>
+    <form [formGroup]="skillForm">
+      <div class="e-input-group">
+        <input class="e-input" formControlName="name" type="text" placeholder="Name" />
+      </div>
+
+      <ejs-dropdownlist
+        class="col-type"
+        #dropdown
+        formControlName="type"
+        [dataSource]="sportsData"
+        [fields]="fields"
+        placeholder="Select Type"
+        floatLabelType="Never"
+      >
+      </ejs-dropdownlist>
+      <div class="e-input-group">
+        <input class="e-input" type="text" placeholder="Default Value" formControlName="defaultValue" />
+      </div>
+    </form>
+  </ng-template>
+</ejs-dialog>
+
+<div style=" margin-left: 10px;">
+  <table id="property" style="width: 100%">
+    <tr style="height: 50px">
+      <td style="width: 50%">
+        <div style="width: 100px">Hierarchy Filtered Mode</div>
+      </td>
+      <td style="width: 50%">
+        <div>
+          <ejs-dropdownlist
+            #dropdown1
+            id="mode"
+            width="100px"
+            [dataSource]="filteredData"
+            [fields]="filteredFields"
+            value="Parent"
+            (change)="change($event)"
+          ></ejs-dropdownlist>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <br />
+  <div class="property-panel-section">
+    <div class="property-panel-header">Properties</div>
+    <table id="property" class="property-panel-table" title="Properties" style="width: 100%">
+      <tr>
+        <td style="width: 70%">
+          <div>
+            Task Id
+          </div>
+        </td>
+        <td style="width: 30%;padding:10px 10px 10px 0px">
+          <div class="col-md-6">
+            <ejs-checkbox #taskID [checked]="true" (change)="onClickColum($event, 'taskID')"></ejs-checkbox>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 70%">
+          <div>
+            Task Name
+          </div>
+        </td>
+        <td style="width: 30%;padding:10px 10px 10px 0px">
+          <div class="col-md-6">
+            <ejs-checkbox #taskName [checked]="true" (change)="onClickColum($event, 'taskName')"></ejs-checkbox>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 70%">
+          <div>
+            Start Date
+          </div>
+        </td>
+        <td style="width: 30%; padding:10px 10px 10px 0px">
+          <div class="col-md-6">
+            <ejs-checkbox #startDate (change)="onClickColum($event, 'startDate')"></ejs-checkbox>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="width: 70%">
+          <div>
+            End Date
+          </div>
+        </td>
+        <td style="width: 30%; padding:10px 10px 10px 0px">
+          <div class="col-md-6">
+            <ejs-checkbox #endDate (change)="onClickColum($event, 'endDate')"></ejs-checkbox>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="width: 70%">
+          <div>
+            Duration
+          </div>
+        </td>
+        <td style="width: 30%; padding:10px 10px 10px 0px">
+          <div class="col-md-6">
+            <ejs-checkbox #duration (change)="onClickColum($event, 'duration')"></ejs-checkbox>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="width: 70%">
+          <div>
+            Progress
+          </div>
+        </td>
+        <td style="width: 30%; padding:10px 10px 10px 0px">
+          <div class="col-md-6">
+            <ejs-checkbox #progress (change)="onClickColum($event, 'progress')"></ejs-checkbox>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td style="width: 70%">
+          <div>
+            Priority
+          </div>
+        </td>
+        <td style="width: 30%; padding:10px 10px 10px 0px">
+          <div class="col-md-6">
+            <ejs-checkbox #priority (change)="onClickColum($event, 'priority')"></ejs-checkbox>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- Multi sorting -->
